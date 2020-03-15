@@ -1,3 +1,4 @@
+from Monitor import Monitor
 class Aula:
     def __init__(self,dia,tipo):
         self.dia = dia
@@ -9,6 +10,15 @@ class Aula:
 
     def qtdeMonitores(self):
         return len(self.monitores)
+
+    def resetMonitores(self):
+        self.monitores = []
+
+    def setMonitores(self,monitores):
+        for monitor in monitores:
+            monitorTemp = Monitor(monitor.nome,monitor.disponibilidade)
+            monitorTemp.setAulas(monitor.aulas,monitor.qtdeAlocacoes)
+            self.monitores.append(monitorTemp)
 
     def __str__(self):
         str = ""

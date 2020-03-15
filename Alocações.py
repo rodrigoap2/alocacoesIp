@@ -1,36 +1,31 @@
 import heapq
+import random
 from Aula import Aula
 from Monitor import Monitor
+from Combinacao import Combinacao
 
 conjuntoAulas = []
 conjuntoMonitores = []
 qtdeMonitoress = 0
+x = 0
+
 #Primeiro adicionar as aulas, depois adicionar os monitores, depois fazer a distribuição
-def designarMonitores():
-    heapq.heapify(conjuntoMonitores)
+def gerarCombinacao():
+    combinacao = Combinacao(x*4/qtdeMonitoress)
     for aula in conjuntoAulas:
-        media = calcularMedia()
-        print(conjuntoMonitores)
-        contador = 0
-        while contador < (len(conjuntoMonitores)*2):
-            monitor = heapq.heappop(conjuntoMonitores)
-            monitor.visitado += 1
-            if aula.qtdeMonitores() >= 4:
-                heapq.heappush(conjuntoMonitores, monitor)
-                break
-            if aula.tipo in monitor.disponibilidade and monitor.nome not in aula.monitores and (monitor.qtdeAulas() <= media or contador > len(conjuntoMonitores)/2 or aula.tipo == 1 or aula.tipo == 4):
+        while aula.qtdeMonitores() < 4:
+            monitor = conjuntoMonitores[random.randint(0,qtdeMonitoress-1)]
+            if aula.tipo in monitor.disponibilidade and monitor not in aula.monitores:
                 monitor.aulas.append(aula.dia)
                 monitor.qtdeAlocacoes += 1
-                aula.monitores.append(monitor.nome)
-            heapq.heappush(conjuntoMonitores,monitor)
-            contador+=1
-        print(aula)
-
-def calcularMedia():
-    valor = 0
+                aula.monitores.append(monitor)
+        newAula = Aula(aula.dia,aula.tipo)
+        newAula.setMonitores(aula.monitores)
+        combinacao.addAula(newAula)
+        aula.resetMonitores()
     for monitor in conjuntoMonitores:
-        valor += monitor.qtdeAulas()
-    return valor/qtdeMonitoress
+        monitor.resetAulas()
+    return combinacao
 
 x = int(input("Digite a quantidade de aulas"))
 for i in range(0,x):
@@ -45,10 +40,10 @@ for i in range(0,qtdeMonitoress):
     disponibilidadeMonitor = input("Digite entre espaços o tipo de dia disponível").split(' ')
     monitor = Monitor(nomeMonitor,disponibilidadeMonitor)
     conjuntoMonitores.append(monitor)
-designarMonitores()
+#Inicializando a população
+for i in range(0,30):
+    a = gerarCombinacao()
+    a.calcularFitness()
+    print(a.fitness)
+#print(a.aulas)
 #print(conjuntoAulas)
-for monitor in conjuntoMonitores:
-    stri = ""
-    for aula in monitor.aulas:
-        stri += aula
-    print(monitor.nome + " " + str(monitor.qtdeAulas()) + " " + stri)

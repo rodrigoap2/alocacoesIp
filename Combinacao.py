@@ -27,5 +27,11 @@ class Combinacao:
         self.fitness /= len(monitores)/100
         self.fitness = int(self.fitness)
 
-    #def __cmp__(self, other):
-     #   return self.fitness >
+    def __str__(self):
+        return str(self.fitness)
+
+    def __repr__(self):
+        return str(self)
+
+    def __lt__(self, other):
+       return self.fitness > other.fitness
